@@ -1,0 +1,11 @@
+{
+  "name": "Test Ürün",
+  "slug": "test-urun",
+  "description": "Bu bir test ürünüdür",
+  "shortDescription": "Test ürünü",
+  "sku": "TEST-001",
+  "basePrice": 99.99,
+  "categoryId": "00000000-0000-0000-0000-000000000001",
+  "isActive": true,
+  "isFeatured": false
+}
