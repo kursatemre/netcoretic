@@ -25,7 +25,7 @@ export default function AdminCategoriesPage() {
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/admincategories', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/admincategories`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -46,8 +46,8 @@ export default function AdminCategoriesPage() {
 
     try {
       const url = editingCategory
-        ? `http://localhost:5000/api/admin/admincategories/${editingCategory.id}`
-        : 'http://localhost:5000/api/admin/admincategories';
+        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/admincategories/${editingCategory.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/admincategories`;
 
       const response = await fetch(url, {
         method: editingCategory ? 'PUT' : 'POST',
@@ -74,7 +74,7 @@ export default function AdminCategoriesPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/admincategories/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/admincategories/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
