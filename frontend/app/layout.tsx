@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'E-Commerce Platform',
   description: 'Kusursuz E-Ticaret Platformu',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
