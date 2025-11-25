@@ -25,32 +25,23 @@ const factors = [
 
 export default function TrustFactors() {
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        {/* Mobile: Horizontal Scroll */}
-        <div className="md:hidden overflow-x-auto scrollbar-hide">
-          <div className="flex gap-6 pb-4">
-            {factors.map((factor, index) => (
-              <div key={index} className="flex-shrink-0 w-64 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-[#F7A072]/10 text-[#F7A072]">
-                  <factor.icon className="w-8 h-8" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{factor.title}</h3>
-                <p className="text-gray-600 text-sm">{factor.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Desktop: Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <section className="py-12 md:py-16 bg-gray-50">
+      <div className="container mx-auto px-2 md:px-4">
+        <div className="grid grid-cols-4 gap-2 md:gap-8">
           {factors.map((factor, index) => (
             <div key={index} className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-[#F7A072]/10 text-[#F7A072]">
-                <factor.icon className="w-8 h-8" />
+              {/* Icon */}
+              <div className="inline-flex items-center justify-center w-10 h-10 md:w-16 md:h-16 mb-2 md:mb-4 rounded-full bg-[#F7A072]/10 text-[#F7A072]">
+                <factor.icon className="w-5 h-5 md:w-8 md:h-8" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">{factor.title}</h3>
-              <p className="text-gray-600 text-sm">{factor.description}</p>
+              {/* Title */}
+              <h3 className="text-xs md:text-lg font-semibold mb-1 md:mb-2 leading-tight">
+                {factor.title}
+              </h3>
+              {/* Description - Hidden on mobile */}
+              <p className="hidden md:block text-gray-600 text-sm">
+                {factor.description}
+              </p>
             </div>
           ))}
         </div>
