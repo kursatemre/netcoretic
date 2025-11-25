@@ -293,7 +293,7 @@ export default function StorePage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold">{slide.title}</h3>
-                      <Badge variant={slide.enabled ? 'success' : 'secondary'}>
+                      <Badge variant={slide.enabled ? 'success' : 'default'}>
                         {slide.enabled ? 'Aktif' : 'Pasif'}
                       </Badge>
                     </div>
@@ -363,7 +363,7 @@ export default function StorePage() {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-mono text-gray-500">#{section.order}</span>
                       <h3 className="font-semibold">{section.name}</h3>
-                      <Badge variant={section.enabled ? 'success' : 'secondary'}>
+                      <Badge variant={section.enabled ? 'success' : 'default'}>
                         {section.enabled ? 'Görünür' : 'Gizli'}
                       </Badge>
                     </div>
