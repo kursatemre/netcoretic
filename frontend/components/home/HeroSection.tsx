@@ -103,36 +103,41 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {/* Navigation Buttons */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm p-3 rounded-full transition-all duration-300 z-10 group"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="text-white group-hover:scale-110 transition-transform" size={28} />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm p-3 rounded-full transition-all duration-300 z-10 group"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="text-white group-hover:scale-110 transition-transform" size={28} />
-      </button>
+      {/* Navigation - Bottom Right Corner */}
+      <div className="absolute bottom-6 right-6 flex items-center gap-3 z-10">
+        {/* Dots Indicator */}
+        <div className="flex gap-2 bg-black/30 backdrop-blur-md px-4 py-2 rounded-full">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`transition-all duration-300 rounded-full ${
+                index === currentSlide
+                  ? 'w-8 h-2 bg-[#F7A072]'
+                  : 'w-2 h-2 bg-white/60 hover:bg-white/90'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
 
-      {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
-        {slides.map((_, index) => (
+        {/* Arrow Buttons */}
+        <div className="flex gap-2">
           <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`transition-all duration-300 rounded-full ${
-              index === currentSlide
-                ? 'w-12 h-3 bg-[#F7A072]'
-                : 'w-3 h-3 bg-white/50 hover:bg-white/80'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
+            onClick={prevSlide}
+            className="bg-black/30 hover:bg-[#F7A072] backdrop-blur-md p-2 rounded-full transition-all duration-300 group"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="text-white" size={20} />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="bg-black/30 hover:bg-[#F7A072] backdrop-blur-md p-2 rounded-full transition-all duration-300 group"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="text-white" size={20} />
+          </button>
+        </div>
       </div>
     </section>
   );

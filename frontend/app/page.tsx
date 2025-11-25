@@ -16,9 +16,6 @@ export default function Home() {
       {/* Hero Section - Full width banner with CTA */}
       <HeroSection />
 
-      {/* Trust Factors - 4 key features */}
-      <TrustFactors />
-
       {/* Category Carousel - Interactive category slider */}
       <CategoryCarousel />
 
@@ -36,6 +33,9 @@ export default function Home() {
 
       {/* Brand Showcase - Popular brands carousel */}
       <BrandShowcase />
+
+      {/* Trust Factors - 4 key features */}
+      <TrustFactors />
 
       {/* Newsletter Subscription - Email capture */}
       <Newsletter />
