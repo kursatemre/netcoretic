@@ -1,35 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui';
 
 export default function HeroSection() {
   return (
-    <section className="relative h-[600px] bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30" />
+    <section className="relative h-[600px] md:h-[700px] overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&h=1080&fit=crop&q=80"
+          alt="Fashion Model"
+          className="w-full h-full object-cover"
+        />
+        {/* Dark Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
+      </div>
 
       {/* Content */}
-      <div className="relative h-full container mx-auto px-4 flex items-center justify-center">
-        <div className="text-center text-white max-w-3xl">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+      <div className="relative h-full container mx-auto px-4 flex items-center">
+        <div className="max-w-2xl text-white">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             Yeni Sezon Koleksiyonu
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-white/90">
+          <p className="text-xl md:text-2xl mb-8 text-white/90 leading-relaxed">
             Trend parçalarla stilinizi tamamlayın. Premium kalite, uygun fiyat.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/products">
-              <Button size="lg" className="w-full sm:w-auto">
-                Ürünleri Keşfet
-              </Button>
-            </Link>
-            <Link href="/search">
-              <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white text-gray-900 hover:bg-gray-100">
-                Ara ve Bul
-              </Button>
-            </Link>
-          </div>
+          <Link
+            href="/products"
+            className="inline-block bg-[#F7A072] hover:bg-[#ff8c5a] text-white font-semibold px-8 py-4 rounded-lg text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+          >
+            Ürünleri Keşfet
+          </Link>
         </div>
       </div>
 
