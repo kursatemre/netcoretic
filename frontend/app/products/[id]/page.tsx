@@ -1,69 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api';
+import { useProduct, useCart } from '@/hooks';
+import { Button, Badge, LoadingSpinner, ErrorMessage } from '@/components/ui';
+import { formatCurrency } from '@/utils';
+import { Minus, Plus } from 'lucide-react';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { product, loading, error } = useProduct(params.id as string);
+  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
 
-  useEffect(() => {
-    if (params.id) {
-      fetchProduct();
-    }
-  }, [params.id]);
+  const handleAddToCart = () => {
+    if (!product) return;
 
-  const fetchProduct = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get(`/Products/${params.id}`);
-      setProduct(response.data);
-      setError('');
-    } catch (err: any) {
-      setError(err.message || 'Ürün yüklenirken hata oluştu');
-    } finally {
-      setLoading(false);
-    }
-  };
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.discountedPrice || product.basePrice,
+      sku: product.sku,
+      quantity,
+    });
 
-  const addToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find((item: any) => item.productId === product.id);
-
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      cart.push({
-        productId: product.id,
-        name: product.name,
-        price: product.discountedPrice || product.basePrice,
-        quantity: quantity,
-        sku: product.sku
-      });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Ürün sepete eklendi!');
     router.push('/cart');
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Yükleniyor...</div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl text-red-600">{error || 'Ürün bulunamadı'}</div>
+      <div className="container mx-auto px-4 py-8">
+        <ErrorMessage message={error || 'Ürün bulunamadı'} />
       </div>
     );
   }
@@ -76,15 +52,15 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-          <span className="text-gray-400 text-xl">No Image</span>
+          <span className="text-gray-400 text-6xl">📦</span>
         </div>
 
         {/* Product Info */}
         <div>
           {product.isFeatured && (
-            <span className="inline-block bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded mb-4">
+            <Badge variant="warning" className="mb-4">
               Öne Çıkan Ürün
-            </span>
+            </Badge>
           )}
 
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
@@ -102,11 +78,11 @@ export default function ProductDetailPage() {
           <div className="border-t pt-6 mb-6">
             <div className="flex items-baseline gap-3 mb-4">
               <span className="text-4xl font-bold text-blue-600">
-                ₺{price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                {formatCurrency(price)}
               </span>
               {hasDiscount && (
                 <span className="text-xl text-gray-400 line-through">
-                  ₺{product.basePrice.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                  {formatCurrency(product.basePrice)}
                 </span>
               )}
             </div>
@@ -116,49 +92,28 @@ export default function ProductDetailPage() {
             {/* Quantity Selector */}
             <div className="flex items-center gap-4 mb-6">
               <label className="font-semibold">Adet:</label>
-              <div className="flex items-center border rounded">
+              <div className="flex items-center border rounded-lg">
                 <button
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="px-4 py-2 hover:bg-gray-100"
+                  className="px-4 py-2 hover:bg-gray-100 transition"
                 >
-                  -
+                  <Minus className="h-4 w-4" />
                 </button>
                 <span className="px-6 py-2 border-x">{quantity}</span>
                 <button
                   onClick={() => setQuantity(q => q + 1)}
-                  className="px-4 py-2 hover:bg-gray-100"
+                  className="px-4 py-2 hover:bg-gray-100 transition"
                 >
-                  +
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
             {/* Add to Cart Button */}
-            <button
-              onClick={addToCart}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
-            >
+            <Button onClick={handleAddToCart} className="w-full" size="lg">
               Sepete Ekle
-            </button>
+            </Button>
           </div>
-
-          {/* Product Variations */}
-          {product.variations && product.variations.length > 0 && (
-            <div className="border-t pt-6">
-              <h3 className="font-semibold text-lg mb-4">Varyasyonlar</h3>
-              <div className="space-y-2">
-                {product.variations.map((variant: any) => (
-                  <div key={variant.id} className="p-3 border rounded hover:border-blue-500">
-                    <p className="font-medium">{variant.name}</p>
-                    <p className="text-sm text-gray-600">SKU: {variant.sku}</p>
-                    <p className="text-blue-600 font-semibold">
-                      ₺{(variant.basePrice + (variant.priceAdjustment || 0)).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
