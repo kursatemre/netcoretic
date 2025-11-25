@@ -1,0 +1,9 @@
+export { default as HeroSection } from './HeroSection';
+export { default as TrustFactors } from './TrustFactors';
+export { default as FeaturedProducts } from './FeaturedProducts';
+export { default as CategoryBanners } from './CategoryBanners';
+export { default as Newsletter } from './Newsletter';
+export { default as CategoryCarousel } from './CategoryCarousel';
+export { default as BrandShowcase } from './BrandShowcase';
+export { default as PromoBanner } from './PromoBanner';
+export { default as SeasonalCollection } from './SeasonalCollection';
