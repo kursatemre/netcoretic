@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useProducts } from '@/hooks';
 import { ProductGrid, ProductSkeleton } from '@/components/product';
 import { ErrorMessage, EmptyState, Pagination } from '@/components/ui';
-import { Package, SlidersHorizontal, Grid3x3, List, X, ChevronRight } from 'lucide-react';
+import { Package, SlidersHorizontal, Grid, List, X, ChevronRight } from 'lucide-react';
 
 export default function ProductsPage() {
   const { products, loading, error, totalPages, currentPage, fetchProducts } = useProducts();
@@ -159,7 +159,7 @@ export default function ProductsPage() {
                     onClick={() => setViewMode('grid')}
                     className={`p-2 transition ${viewMode === 'grid' ? 'bg-[#F7A072] text-white' : 'hover:bg-gray-50'}`}
                   >
-                    <Grid3x3 size={18} />
+                    <Grid size={18} />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
