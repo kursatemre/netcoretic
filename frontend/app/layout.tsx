@@ -1,30 +1,28 @@
+'use client';
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { usePathname } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'E-Commerce Platform',
-  description: 'Kusursuz E-Ticaret Platformu',
-  icons: {
-    icon: '/favicon.ico',
-  },
-};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith('/admin');
+
   return (
     <html lang="tr">
       <body className={inter.className}>
-        <Navbar />
+        {!isAdminRoute && <Navbar />}
         <main>{children}</main>
-        <Footer />
+        {!isAdminRoute && <Footer />}
       </body>
     </html>
   );
