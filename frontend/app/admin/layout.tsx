@@ -2,21 +2,23 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Tags, 
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  Tags,
   FolderTree,
   LogOut,
   Menu,
-  X
+  X,
+  Store
 } from 'lucide-react';
 import { useState } from 'react';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Mağaza', href: '/admin/store', icon: Store },
   { name: 'Ürünler', href: '/admin/products', icon: Package },
   { name: 'Kategoriler', href: '/admin/categories', icon: FolderTree },
   { name: 'Markalar', href: '/admin/brands', icon: Tags },
