@@ -131,7 +131,7 @@ export default function ProductDetailPage() {
                 <Badge variant="warning">Öne Çıkan</Badge>
               )}
               {product.brand && (
-                <Badge variant="secondary">{product.brand.name}</Badge>
+                <Badge variant="default">{product.brand.name}</Badge>
               )}
             </div>
 
