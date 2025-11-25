@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Application.DTOs;
 using Domain.Interfaces;
 using MediatR;
