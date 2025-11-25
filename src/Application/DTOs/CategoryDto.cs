@@ -14,4 +14,6 @@ public class CategoryDto
     public bool IsActive { get; set; }
     public Guid? ParentCategoryId { get; set; }
     public List<CategoryDto> SubCategories { get; set; } = new();
+    public int ProductCount { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
