@@ -3,7 +3,11 @@ import {
   TrustFactors,
   FeaturedProducts,
   CategoryBanners,
-  Newsletter
+  Newsletter,
+  CategoryCarousel,
+  BrandShowcase,
+  PromoBanner,
+  SeasonalCollection
 } from '@/components/home';
 
 export default function Home() {
@@ -15,11 +19,23 @@ export default function Home() {
       {/* Trust Factors - 4 key features */}
       <TrustFactors />
 
+      {/* Category Carousel - Interactive category slider */}
+      <CategoryCarousel />
+
       {/* Featured Products - 8 products grid */}
       <FeaturedProducts />
 
+      {/* Promo Banner - 3 promotional banners */}
+      <PromoBanner />
+
+      {/* Seasonal Collection - Special collection showcase */}
+      <SeasonalCollection />
+
       {/* Category Banners - 3 main categories */}
       <CategoryBanners />
+
+      {/* Brand Showcase - Popular brands carousel */}
+      <BrandShowcase />
 
       {/* Newsletter Subscription - Email capture */}
       <Newsletter />
