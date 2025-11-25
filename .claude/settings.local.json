@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: Replace invalid ''secondary'' Badge variant with ''default''\n\nFixed TypeScript compilation error in admin store page where Badge\ncomponent was using ''secondary'' variant which doesn''t exist in the\nBadge component''s type definition. Replaced with ''default'' variant.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git pull:*)",
+      "Bash(git commit:*)",
+      "Bash(git merge:*)",
+      "Bash(git restore:*)",
+      "Bash(dotnet build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

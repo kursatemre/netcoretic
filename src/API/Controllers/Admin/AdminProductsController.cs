@@ -60,8 +60,7 @@ public class AdminProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductDto>> GetById(Guid id)
     {
-        var query = new GetProductByIdQuery { Id = id };
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(new GetProductByIdQuery(id));
         return Ok(result);
     }
 
@@ -102,8 +101,7 @@ public class AdminProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var command = new DeleteProductCommand { Id = id };
-        await _mediator.Send(command);
+        await _mediator.Send(new DeleteProductCommand(id));
         return NoContent();
     }
 
@@ -114,7 +112,7 @@ public class AdminProductsController : ControllerBase
     [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<ProductDto>> ToggleActive(Guid id)
     {
-        var product = await _mediator.Send(new GetProductByIdQuery { Id = id });
+        var product = await _mediator.Send(new GetProductByIdQuery(id));
         var command = new UpdateProductCommand
         {
             Id = id,
@@ -138,7 +136,7 @@ public class AdminProductsController : ControllerBase
     [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<ProductDto>> ToggleFeatured(Guid id)
     {
-        var product = await _mediator.Send(new GetProductByIdQuery { Id = id });
+        var product = await _mediator.Send(new GetProductByIdQuery(id));
         var command = new UpdateProductCommand
         {
             Id = id,

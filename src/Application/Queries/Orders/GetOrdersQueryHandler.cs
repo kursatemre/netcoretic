@@ -2,6 +2,7 @@ using Application.DTOs;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Queries.Orders;
 
@@ -53,6 +54,7 @@ public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, PagedResult
 
         // Apply pagination
         var orders = query
+            .Include(o => o.User)
             .OrderByDescending(o => o.CreatedAt)
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
@@ -68,21 +70,25 @@ public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, PagedResult
         {
             Id = order.Id,
             OrderNumber = order.OrderNumber,
-            UserId = order.UserId,
-            Status = order.Status.ToString(),
+            CustomerFirstName = order.User?.FirstName,
+            CustomerLastName = order.User?.LastName,
+            CustomerEmail = order.User?.Email,
+            Status = order.Status,
+            PaymentStatus = order.PaymentStatus,
+            ShippingStatus = order.ShippingStatus,
             SubTotal = order.SubTotal,
             ShippingCost = order.ShippingCost,
-            Tax = order.TaxAmount,
+            TaxAmount = order.TaxAmount,
+            DiscountAmount = order.DiscountAmount,
             TotalAmount = order.TotalAmount,
             CreatedAt = order.CreatedAt,
-            Items = orderItems
+            OrderItems = orderItems
                 .Where(oi => oi.OrderId == order.Id)
                 .Select(oi => new OrderItemDto
                 {
                     Id = oi.Id,
-                    ProductId = oi.ProductId,
-                    ProductVariationId = oi.ProductVariationId,
                     ProductName = oi.ProductName,
+                    VariationName = oi.VariationName,
                     SKU = oi.SKU,
                     Quantity = oi.Quantity,
                     UnitPrice = oi.UnitPrice,

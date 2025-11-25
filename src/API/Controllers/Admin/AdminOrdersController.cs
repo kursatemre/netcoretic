@@ -5,7 +5,6 @@ using Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OrderDto = Application.Queries.Orders.OrderDto;
 
 namespace API.Controllers.Admin;
 
@@ -125,16 +124,16 @@ public class AdminOrdersController : ControllerBase
         var stats = new
         {
             TotalOrders = orders.TotalCount,
-            PendingOrders = orders.Items.Count(o => o.Status == "Pending"),
-            ProcessingOrders = orders.Items.Count(o => o.Status == "Processing"),
-            ShippedOrders = orders.Items.Count(o => o.Status == "Shipped"),
-            DeliveredOrders = orders.Items.Count(o => o.Status == "Delivered"),
-            CancelledOrders = orders.Items.Count(o => o.Status == "Cancelled"),
-            TotalRevenue = orders.Items.Where(o => o.Status != "Cancelled").Sum(o => o.TotalAmount),
-            AverageOrderValue = orders.Items.Where(o => o.Status != "Cancelled").Any()
-                ? orders.Items.Where(o => o.Status != "Cancelled").Average(o => o.TotalAmount)
+            PendingOrders = orders.Items.Count(o => o.Status == OrderStatus.Pending),
+            ProcessingOrders = orders.Items.Count(o => o.Status == OrderStatus.Processing),
+            ShippedOrders = orders.Items.Count(o => o.Status == OrderStatus.Shipped),
+            DeliveredOrders = orders.Items.Count(o => o.Status == OrderStatus.Delivered),
+            CancelledOrders = orders.Items.Count(o => o.Status == OrderStatus.Cancelled),
+            TotalRevenue = orders.Items.Where(o => o.Status != OrderStatus.Cancelled).Sum(o => o.TotalAmount),
+            AverageOrderValue = orders.Items.Where(o => o.Status != OrderStatus.Cancelled).Any()
+                ? orders.Items.Where(o => o.Status != OrderStatus.Cancelled).Average(o => o.TotalAmount)
                 : 0,
-            TotalTax = orders.Items.Sum(o => o.Tax),
+            TotalTax = orders.Items.Sum(o => o.TaxAmount),
             TotalShipping = orders.Items.Sum(o => o.ShippingCost)
         };
 
@@ -162,7 +161,7 @@ public class AdminOrdersController : ControllerBase
         });
 
         var dailySales = orders.Items
-            .Where(o => o.Status != "Cancelled")
+            .Where(o => o.Status != OrderStatus.Cancelled)
             .GroupBy(o => o.CreatedAt.Date)
             .Select(g => new
             {

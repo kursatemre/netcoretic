@@ -15,8 +15,9 @@ public class ProductDto
     public decimal? DiscountedPrice { get; set; }
     public bool IsActive { get; set; }
     public bool IsFeatured { get; set; }
+    public int StockQuantity { get; set; }
     public DateTime CreatedAt { get; set; }
-    
+
     public CategoryDto? Category { get; set; }
     public BrandDto? Brand { get; set; }
     public List<ProductVariationDto> Variations { get; set; } = new();

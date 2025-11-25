@@ -1,3 +1,5 @@
+using Domain.Enums;
+
 namespace Application.DTOs;
 
 /// <summary>
@@ -7,14 +9,17 @@ public class OrderDto
 {
     public Guid Id { get; set; }
     public string OrderNumber { get; set; } = string.Empty;
+    public string? CustomerFirstName { get; set; }
+    public string? CustomerLastName { get; set; }
+    public string? CustomerEmail { get; set; }
     public decimal SubTotal { get; set; }
     public decimal ShippingCost { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal DiscountAmount { get; set; }
     public decimal TotalAmount { get; set; }
-    public string Status { get; set; } = string.Empty;
-    public string PaymentStatus { get; set; } = string.Empty;
-    public string ShippingStatus { get; set; } = string.Empty;
+    public OrderStatus Status { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
+    public ShippingStatus ShippingStatus { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<OrderItemDto> OrderItems { get; set; } = new();
 }

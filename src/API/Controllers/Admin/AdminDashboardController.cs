@@ -93,7 +93,7 @@ public class AdminDashboardController : ControllerBase
                 : 0,
             
             RevenueGrowth = lastMonthRevenue > 0
-                ? Math.Round(((double)(thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100, 2)
+                ? Math.Round(((double)(thisMonthRevenue - lastMonthRevenue) / (double)lastMonthRevenue) * 100, 2)
                 : 0
         };
 
@@ -144,14 +144,13 @@ public class AdminDashboardController : ControllerBase
 
         var topProducts = orders.Items
             .Where(o => o.Status != OrderStatus.Cancelled)
-            .SelectMany(o => o.Items)
-            .GroupBy(i => new { i.ProductId, i.ProductName })
+            .SelectMany(o => o.OrderItems)
+            .GroupBy(i => i.ProductName)
             .Select(g => new
             {
-                g.Key.ProductId,
-                g.Key.ProductName,
+                ProductName = g.Key,
                 TotalQuantity = g.Sum(i => i.Quantity),
-                TotalRevenue = g.Sum(i => i.Quantity * i.Price)
+                TotalRevenue = g.Sum(i => i.TotalPrice)
             })
             .OrderByDescending(p => p.TotalQuantity)
             .Take(limit)
