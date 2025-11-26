@@ -41,12 +41,30 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         b => b.MigrationsAssembly("Infrastructure"));
 });
 
-// Redis Cache Configuration
-builder.Services.AddStackExchangeRedisCache(options =>
+// Redis Cache Configuration (Optional)
+var redisConnection = builder.Configuration.GetConnectionString("Redis");
+if (!string.IsNullOrEmpty(redisConnection))
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-    options.InstanceName = "ECommerce_";
-});
+    try
+    {
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnection;
+            options.InstanceName = "ECommerce_";
+        });
+        Console.WriteLine("✅ Redis cache enabled");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ Redis cache disabled: {ex.Message}");
+        builder.Services.AddDistributedMemoryCache(); // Fallback to in-memory cache
+    }
+}
+else
+{
+    Console.WriteLine("⚠️ Redis connection string not found, using in-memory cache");
+    builder.Services.AddDistributedMemoryCache(); // Fallback to in-memory cache
+}
 
 // Repository Pattern
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -59,8 +77,26 @@ builder.Services.AddMediatR(cfg =>
 // FluentValidation
 builder.Services.AddValidatorsFromAssembly(typeof(CreateProductCommand).Assembly);
 
-// Elasticsearch Search Service
-builder.Services.AddSingleton<Application.Interfaces.IProductSearchService, Infrastructure.Search.ElasticsearchService>();
+// Elasticsearch Search Service (Optional)
+var elasticsearchUri = builder.Configuration["Elasticsearch:Uri"];
+if (!string.IsNullOrEmpty(elasticsearchUri))
+{
+    try
+    {
+        builder.Services.AddSingleton<Application.Interfaces.IProductSearchService, Infrastructure.Search.ElasticsearchService>();
+        Console.WriteLine("✅ Elasticsearch search enabled");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ Elasticsearch disabled: {ex.Message}");
+        builder.Services.AddSingleton<Application.Interfaces.IProductSearchService, Infrastructure.Search.NoOpProductSearchService>();
+    }
+}
+else
+{
+    Console.WriteLine("⚠️ Elasticsearch URI not configured, search functionality disabled");
+    builder.Services.AddSingleton<Application.Interfaces.IProductSearchService, Infrastructure.Search.NoOpProductSearchService>();
+}
 
 // Payment & Shipping Adapters
 builder.Services.AddScoped<IPaymentProvider, IyzicoPaymentProvider>();
@@ -125,11 +161,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Enable Swagger in all environments for API testing
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "E-Commerce API v1");
+    c.RoutePrefix = "swagger"; // Access at /swagger
+});
 
 // Global Exception Handling
 app.UseMiddleware<ExceptionHandlingMiddleware>();
