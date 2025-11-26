@@ -753,7 +753,7 @@ export default function StorePage() {
                       </Button>
                       <Button
                         size="sm"
-                        variant={section.enabled ? 'warning' : 'success'}
+                        variant={section.enabled ? 'secondary' : 'primary'}
                         onClick={() => toggleSection(section.id)}
                       >
                         <Eye size={16} className="mr-1" />
