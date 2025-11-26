@@ -73,19 +73,19 @@ export const adminProductApi = {
 };
 
 export const adminCategoryApi = {
-  getAll: () => apiClient.get('/Categories'),
-  getById: (id: string) => apiClient.get(`/Categories/${id}`),
-  create: (data: any) => apiClient.post('/Categories', data),
-  update: (id: string, data: any) => apiClient.put(`/Categories/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/Categories/${id}`),
+  getAll: () => apiClient.get('/admin/AdminCategories'),
+  getById: (id: string) => apiClient.get(`/admin/AdminCategories/${id}`),
+  create: (data: any) => apiClient.post('/admin/AdminCategories', data),
+  update: (id: string, data: any) => apiClient.put(`/admin/AdminCategories/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/admin/AdminCategories/${id}`),
 };
 
 export const adminBrandApi = {
-  getAll: () => apiClient.get('/Brands'),
-  getById: (id: string) => apiClient.get(`/Brands/${id}`),
-  create: (data: any) => apiClient.post('/Brands', data),
-  update: (id: string, data: any) => apiClient.put(`/Brands/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/Brands/${id}`),
+  getAll: () => apiClient.get('/admin/AdminBrands'),
+  getById: (id: string) => apiClient.get(`/admin/AdminBrands/${id}`),
+  create: (data: any) => apiClient.post('/admin/AdminBrands', data),
+  update: (id: string, data: any) => apiClient.put(`/admin/AdminBrands/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/admin/AdminBrands/${id}`),
 };
 
 export const adminOrderApi = {
