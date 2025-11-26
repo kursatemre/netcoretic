@@ -6,9 +6,12 @@ public static class DbSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext context)
     {
-        // Check if data already exists
-        if (context.Categories.Any() || context.Brands.Any() || context.ProductAttributes.Any())
+        // Check if sample products already exist
+        if (context.Products.Any(p => p.SKU == "SAM-S24-001"))
+        {
+            Console.WriteLine("⚠️ Seed data already exists, skipping...");
             return;
+        }
 
         // Seed Categories
         var categories = new List<Category>
