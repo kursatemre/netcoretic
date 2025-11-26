@@ -189,5 +189,101 @@ public static class DbSeeder
         await context.Categories.AddRangeAsync(categories);
         await context.Brands.AddRangeAsync(brands);
         await context.SaveChangesAsync();
+
+        // Seed Sample Products
+        var products = new List<Product>
+        {
+            new Product
+            {
+                Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                Name = "Samsung Galaxy S24",
+                Slug = "samsung-galaxy-s24",
+                Description = "Samsung'un en yeni amiral gemisi telefonu. 200MP kamera, Snapdragon 8 Gen 3 işlemci, 6.2 inç Dynamic AMOLED ekran.",
+                ShortDescription = "En son Galaxy serisi telefon",
+                SKU = "SAM-S24-001",
+                BasePrice = 45999,
+                DiscountedPrice = 42999,
+                IsActive = true,
+                IsFeatured = true,
+                CategoryId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                BrandId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                CreatedAt = DateTime.UtcNow
+            },
+            new Product
+            {
+                Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                Name = "Nike Air Max 2024",
+                Slug = "nike-air-max-2024",
+                Description = "Klasik Air Max tasarımının modern yorumu. Maksimum konfor ve stil. Hava yastıklı taban, nefes alabilir üst yapı.",
+                ShortDescription = "Yeni nesil Air Max",
+                SKU = "NIKE-AM-2024",
+                BasePrice = 5499,
+                DiscountedPrice = 4999,
+                IsActive = true,
+                IsFeatured = true,
+                CategoryId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                BrandId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                CreatedAt = DateTime.UtcNow
+            },
+            new Product
+            {
+                Id = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff"),
+                Name = "IKEA MALM Yatak Odası Takımı",
+                Slug = "ikea-malm-yatak-odasi",
+                Description = "Modern ve minimalist tasarımlı yatak odası takımı. Yatak, komodin, ve gardırop dahil. Beyaz meşe kaplama.",
+                ShortDescription = "Komplet yatak odası seti",
+                SKU = "IKEA-MALM-001",
+                BasePrice = 15999,
+                DiscountedPrice = 13999,
+                IsActive = true,
+                IsFeatured = false,
+                CategoryId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                BrandId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                CreatedAt = DateTime.UtcNow
+            }
+        };
+
+        await context.Products.AddRangeAsync(products);
+        await context.SaveChangesAsync();
+
+        // Seed Product Images
+        var productImages = new List<ProductImage>
+        {
+            new ProductImage
+            {
+                Id = Guid.NewGuid(),
+                ProductId = products[0].Id,
+                ImageUrl = "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800",
+                ThumbnailUrl = "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=200",
+                DisplayOrder = 1,
+                IsDefault = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            new ProductImage
+            {
+                Id = Guid.NewGuid(),
+                ProductId = products[1].Id,
+                ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800",
+                ThumbnailUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200",
+                DisplayOrder = 1,
+                IsDefault = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            new ProductImage
+            {
+                Id = Guid.NewGuid(),
+                ProductId = products[2].Id,
+                ImageUrl = "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+                ThumbnailUrl = "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=200",
+                DisplayOrder = 1,
+                IsDefault = true,
+                CreatedAt = DateTime.UtcNow
+            }
+        };
+
+        await context.ProductImages.AddRangeAsync(productImages);
+        await context.SaveChangesAsync();
+
+        Console.WriteLine("✅ Seed data successfully added: 3 categories, 3 brands, 3 products");
     }
 }
