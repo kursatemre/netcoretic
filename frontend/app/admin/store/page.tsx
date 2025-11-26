@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings, Image, Sliders, Layout, ChevronUp, ChevronDown, Plus, Trash2, Edit2, Eye, Save, X, Type, Palette } from 'lucide-react';
 import { Button, Card, Badge } from '@/components/ui';
 
@@ -194,6 +194,34 @@ export default function StorePage() {
   const [showSectionModal, setShowSectionModal] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('storeSettings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      setLogo(settings.logo || '');
+      setSiteName(settings.siteName || 'NetCoretic');
+      setThemeColor(settings.themeColor || '#F7A072');
+    }
+
+    const savedSlides = localStorage.getItem('heroSlides');
+    if (savedSlides) {
+      setHeroSlides(JSON.parse(savedSlides));
+    }
+
+    const savedSections = localStorage.getItem('storeSections');
+    if (savedSections) {
+      setSections(JSON.parse(savedSections));
+    }
+  }, []);
+
+  // Save general settings
+  const saveGeneralSettings = () => {
+    const settings = { logo, siteName, themeColor };
+    localStorage.setItem('storeSettings', JSON.stringify(settings));
+    alert('Ayarlar başarıyla kaydedildi!');
+  };
+
   const moveSection = (id: string, direction: 'up' | 'down') => {
     const index = sections.findIndex(s => s.id === id);
     if (
@@ -243,9 +271,11 @@ export default function StorePage() {
 
   const saveSection = () => {
     if (!editingSection) return;
-    setSections(sections.map(s =>
+    const updatedSections = sections.map(s =>
       s.id === editingSection.id ? editingSection : s
-    ));
+    );
+    setSections(updatedSections);
+    localStorage.setItem('storeSections', JSON.stringify(updatedSections));
     setEditingSection(null);
   };
 
@@ -267,11 +297,14 @@ export default function StorePage() {
     if (!editingSlide) return;
 
     const exists = heroSlides.find(s => s.id === editingSlide.id);
+    let updatedSlides;
     if (exists) {
-      setHeroSlides(heroSlides.map(s => s.id === editingSlide.id ? editingSlide : s));
+      updatedSlides = heroSlides.map(s => s.id === editingSlide.id ? editingSlide : s);
     } else {
-      setHeroSlides([...heroSlides, editingSlide]);
+      updatedSlides = [...heroSlides, editingSlide];
     }
+    setHeroSlides(updatedSlides);
+    localStorage.setItem('heroSlides', JSON.stringify(updatedSlides));
     setShowSlideModal(false);
     setEditingSlide(null);
   };
@@ -624,7 +657,7 @@ export default function StorePage() {
               </div>
 
               <div className="pt-4">
-                <Button>
+                <Button onClick={saveGeneralSettings}>
                   <Save size={18} className="mr-2" />
                   Ayarları Kaydet
                 </Button>
