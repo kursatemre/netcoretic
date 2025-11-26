@@ -115,7 +115,7 @@ export default function BrandsPage() {
         </table>
       </div>
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingBrand ? 'Marka Düzenle' : 'Yeni Marka'} footer={<><Button variant="secondary" onClick={() => setShowModal(false)}>İptal</Button><Button onClick={handleSubmit}>{editingBrand ? 'Güncelle' : 'Oluştur'}</Button></>}>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingBrand ? 'Marka Düzenle' : 'Yeni Marka'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Marka Adı" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
           <TextArea label="Açıklama" rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
@@ -124,6 +124,10 @@ export default function BrandsPage() {
             <input type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} className="mr-2" />
             <span className="text-sm text-gray-700">Aktif</span>
           </label>
+          <div className="flex gap-3 pt-4">
+            <Button type="submit">{editingBrand ? 'Güncelle' : 'Oluştur'}</Button>
+            <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>İptal</Button>
+          </div>
         </form>
       </Modal>
     </div>

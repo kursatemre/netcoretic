@@ -107,10 +107,14 @@ export default function AdminCategoriesPage() {
         </table>
       </div>
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingCategory ? 'Kategori Düzenle' : 'Yeni Kategori'} footer={<><Button variant="secondary" onClick={() => setShowModal(false)}>İptal</Button><Button onClick={handleSubmit}>Kaydet</Button></>}>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editingCategory ? 'Kategori Düzenle' : 'Yeni Kategori'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Kategori Adı" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
           <TextArea label="Açıklama" rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+          <div className="flex gap-3 pt-4">
+            <Button type="submit">Kaydet</Button>
+            <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>İptal</Button>
+          </div>
         </form>
       </Modal>
     </div>
