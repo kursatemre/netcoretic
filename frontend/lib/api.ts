@@ -28,13 +28,13 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-      }
-    }
+    // Temporarily disable 401 redirect for development
+    // if (error.response?.status === 401) {
+    //   if (typeof window !== 'undefined') {
+    //     localStorage.removeItem('token');
+    //     window.location.href = '/login';
+    //   }
+    // }
     return Promise.reject(error);
   }
 );
@@ -62,47 +62,47 @@ export const orderApi = {
   create: (data: any) => apiClient.post('/Orders', data),
 };
 
-// Admin API Functions
+// Admin API Functions (using public endpoints for now)
 export const adminProductApi = {
-  getAll: (params?: any) => apiClient.get('/admin/adminproducts', { params }),
-  getById: (id: string) => apiClient.get(`/admin/adminproducts/${id}`),
-  create: (data: any) => apiClient.post('/admin/adminproducts', data),
-  update: (id: string, data: any) => apiClient.put(`/admin/adminproducts/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/admin/adminproducts/${id}`),
-  toggleActive: (id: string) => apiClient.patch(`/admin/adminproducts/${id}/toggle-active`),
+  getAll: (params?: any) => apiClient.get('/Products', { params }),
+  getById: (id: string) => apiClient.get(`/Products/${id}`),
+  create: (data: any) => apiClient.post('/Products', data),
+  update: (id: string, data: any) => apiClient.put(`/Products/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/Products/${id}`),
+  toggleActive: (id: string) => apiClient.patch(`/Products/${id}/toggle-active`),
 };
 
 export const adminCategoryApi = {
-  getAll: () => apiClient.get('/admin/admincategories'),
-  getById: (id: string) => apiClient.get(`/admin/admincategories/${id}`),
-  create: (data: any) => apiClient.post('/admin/admincategories', data),
-  update: (id: string, data: any) => apiClient.put(`/admin/admincategories/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/admin/admincategories/${id}`),
+  getAll: () => apiClient.get('/Categories'),
+  getById: (id: string) => apiClient.get(`/Categories/${id}`),
+  create: (data: any) => apiClient.post('/Categories', data),
+  update: (id: string, data: any) => apiClient.put(`/Categories/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/Categories/${id}`),
 };
 
 export const adminBrandApi = {
-  getAll: () => apiClient.get('/admin/adminbrands'),
-  getById: (id: string) => apiClient.get(`/admin/adminbrands/${id}`),
-  create: (data: any) => apiClient.post('/admin/adminbrands', data),
-  update: (id: string, data: any) => apiClient.put(`/admin/adminbrands/${id}`, data),
-  delete: (id: string) => apiClient.delete(`/admin/adminbrands/${id}`),
+  getAll: () => apiClient.get('/Brands'),
+  getById: (id: string) => apiClient.get(`/Brands/${id}`),
+  create: (data: any) => apiClient.post('/Brands', data),
+  update: (id: string, data: any) => apiClient.put(`/Brands/${id}`, data),
+  delete: (id: string) => apiClient.delete(`/Brands/${id}`),
 };
 
 export const adminOrderApi = {
-  getAll: (params?: any) => apiClient.get('/admin/adminorders', { params }),
-  getById: (id: string) => apiClient.get(`/admin/adminorders/${id}`),
-  updateStatus: (id: string, status: string) => apiClient.patch(`/admin/adminorders/${id}/status`, { status }),
+  getAll: (params?: any) => apiClient.get('/Orders', { params }),
+  getById: (id: string) => apiClient.get(`/Orders/${id}`),
+  updateStatus: (id: string, status: string) => apiClient.patch(`/Orders/${id}/status`, { status }),
 };
 
 export const adminUserApi = {
-  getAll: () => apiClient.get('/admin/adminusers'),
-  getById: (id: string) => apiClient.get(`/admin/adminusers/${id}`),
-  toggleActive: (id: string) => apiClient.post(`/admin/adminusers/${id}/toggle-active`),
-  addRole: (id: string, roleName: string) => apiClient.post(`/admin/adminusers/${id}/roles`, { roleName }),
-  removeRole: (id: string, roleName: string) => apiClient.delete(`/admin/adminusers/${id}/roles/${roleName}`),
+  getAll: () => apiClient.get('/Users'),
+  getById: (id: string) => apiClient.get(`/Users/${id}`),
+  toggleActive: (id: string) => apiClient.post(`/Users/${id}/toggle-active`),
+  addRole: (id: string, roleName: string) => apiClient.post(`/Users/${id}/roles`, { roleName }),
+  removeRole: (id: string, roleName: string) => apiClient.delete(`/Users/${id}/roles/${roleName}`),
 };
 
 export const adminDashboardApi = {
-  getOverview: () => apiClient.get('/admin/dashboard/overview'),
-  getRecentOrders: (limit: number = 5) => apiClient.get(`/admin/dashboard/recent-orders?limit=${limit}`),
+  getOverview: () => apiClient.get('/Dashboard/overview'),
+  getRecentOrders: (limit: number = 5) => apiClient.get(`/Dashboard/recent-orders?limit=${limit}`),
 };
