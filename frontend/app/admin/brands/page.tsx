@@ -20,7 +20,7 @@ export default function BrandsPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
-  const [formData, setFormData] = useState({ name: '', description: '', logoUrl: '', isActive: true });
+  const [formData, setFormData] = useState({ name: '', description: '' });
 
   useEffect(() => {
     fetchBrands();
@@ -46,7 +46,7 @@ export default function BrandsPage() {
         await adminBrandApi.create(formData);
       }
       setShowModal(false);
-      setFormData({ name: '', description: '', logoUrl: '', isActive: true });
+      setFormData({ name: '', description: '' });
       setEditingBrand(null);
       fetchBrands();
     } catch (error) {
@@ -73,7 +73,7 @@ export default function BrandsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Markalar</h1>
           <p className="mt-2 text-sm text-gray-700">Marka yönetimi</p>
         </div>
-        <Button onClick={() => { setEditingBrand(null); setFormData({ name: '', description: '', logoUrl: '', isActive: true }); setShowModal(true); }}>
+        <Button onClick={() => { setEditingBrand(null); setFormData({ name: '', description: '' }); setShowModal(true); }}>
           <Plus className="h-5 w-5 mr-2" />
           Yeni Marka
         </Button>
@@ -102,7 +102,7 @@ export default function BrandsPage() {
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => { setEditingBrand(brand); setFormData({ name: brand.name, description: brand.description || '', logoUrl: brand.logoUrl || '', isActive: brand.isActive }); setShowModal(true); }} className="text-blue-600 hover:text-blue-900 mr-3">
+                  <button onClick={() => { setEditingBrand(brand); setFormData({ name: brand.name, description: brand.description || '' }); setShowModal(true); }} className="text-blue-600 hover:text-blue-900 mr-3">
                     <Edit2 className="w-5 h-5" />
                   </button>
                   <button onClick={() => handleDelete(brand.id)} className="text-red-600 hover:text-red-900">
@@ -119,11 +119,6 @@ export default function BrandsPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Marka Adı" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
           <TextArea label="Açıklama" rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
-          <Input label="Logo URL" type="url" value={formData.logoUrl} onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })} />
-          <label className="flex items-center">
-            <input type="checkbox" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} className="mr-2" />
-            <span className="text-sm text-gray-700">Aktif</span>
-          </label>
           <div className="flex gap-3 pt-4">
             <Button type="submit">{editingBrand ? 'Güncelle' : 'Oluştur'}</Button>
             <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>İptal</Button>
