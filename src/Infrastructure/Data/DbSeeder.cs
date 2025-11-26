@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
@@ -7,190 +8,209 @@ public static class DbSeeder
     public static async Task SeedAsync(ApplicationDbContext context)
     {
         // Check if sample products already exist
-        if (context.Products.Any(p => p.SKU == "SAM-S24-001"))
+        if (await context.Products.AnyAsync(p => p.SKU == "SAM-S24-001"))
         {
             Console.WriteLine("⚠️ Seed data already exists, skipping...");
             return;
         }
 
-        // Seed Categories
-        var categories = new List<Category>
+        Console.WriteLine("🌱 Starting seed data...");
+
+        // Get or create Categories
+        var elektronikId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var giyimId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        var mobilyaId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+
+        if (!await context.Categories.AnyAsync(c => c.Id == elektronikId))
         {
-            new Category
+            await context.Categories.AddAsync(new Category
             {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                Id = elektronikId,
                 Name = "Elektronik",
                 Slug = "elektronik",
                 Description = "Elektronik ürünler",
                 DisplayOrder = 1,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
-            },
-            new Category
+            });
+        }
+
+        if (!await context.Categories.AnyAsync(c => c.Id == giyimId))
+        {
+            await context.Categories.AddAsync(new Category
             {
-                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                Id = giyimId,
                 Name = "Giyim",
                 Slug = "giyim",
                 Description = "Giyim ürünleri",
                 DisplayOrder = 2,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
-            },
-            new Category
+            });
+        }
+
+        if (!await context.Categories.AnyAsync(c => c.Id == mobilyaId))
+        {
+            await context.Categories.AddAsync(new Category
             {
-                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                Id = mobilyaId,
                 Name = "Mobilya",
                 Slug = "mobilya",
                 Description = "Ev mobilyaları",
                 DisplayOrder = 3,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
-            }
-        };
+            });
+        }
 
-        // Seed Brands
-        var brands = new List<Brand>
+        await context.SaveChangesAsync();
+
+        // Get or create Brands
+        var samsungId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        var nikeId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+        var ikeaId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc");
+
+        if (!await context.Brands.AnyAsync(b => b.Id == samsungId))
         {
-            new Brand
+            await context.Brands.AddAsync(new Brand
             {
-                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Id = samsungId,
                 Name = "Samsung",
                 Slug = "samsung",
                 Description = "Samsung Electronics",
                 IsActive = true,
                 DisplayOrder = 1,
                 CreatedAt = DateTime.UtcNow
-            },
-            new Brand
+            });
+        }
+
+        if (!await context.Brands.AnyAsync(b => b.Id == nikeId))
+        {
+            await context.Brands.AddAsync(new Brand
             {
-                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                Id = nikeId,
                 Name = "Nike",
                 Slug = "nike",
                 Description = "Nike Sports",
                 IsActive = true,
                 DisplayOrder = 2,
                 CreatedAt = DateTime.UtcNow
-            },
-            new Brand
+            });
+        }
+
+        if (!await context.Brands.AnyAsync(b => b.Id == ikeaId))
+        {
+            await context.Brands.AddAsync(new Brand
             {
-                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                Id = ikeaId,
                 Name = "IKEA",
                 Slug = "ikea",
                 Description = "IKEA Furniture",
                 IsActive = true,
                 DisplayOrder = 3,
                 CreatedAt = DateTime.UtcNow
-            }
-        };
+            });
+        }
 
-        // Seed Product Attributes (Renk, Beden, Hafıza)
-        var colorAttribute = new ProductAttribute
-        {
-            Id = Guid.Parse("11111111-aaaa-aaaa-aaaa-111111111111"),
-            Name = "Renk",
-            Slug = "renk",
-            Description = "Ürün rengi",
-            DisplayOrder = 1,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        var sizeAttribute = new ProductAttribute
-        {
-            Id = Guid.Parse("22222222-aaaa-aaaa-aaaa-222222222222"),
-            Name = "Beden",
-            Slug = "beden",
-            Description = "Ürün bedeni",
-            DisplayOrder = 2,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        var storageAttribute = new ProductAttribute
-        {
-            Id = Guid.Parse("33333333-aaaa-aaaa-aaaa-333333333333"),
-            Name = "Hafıza",
-            Slug = "hafiza",
-            Description = "Cihaz hafızası",
-            DisplayOrder = 3,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        await context.ProductAttributes.AddRangeAsync(new[] { colorAttribute, sizeAttribute, storageAttribute });
         await context.SaveChangesAsync();
 
-        // Seed Attribute Values
-        var colorValues = new List<ProductAttributeValue>
+        // Get or create Product Attributes
+        var colorAttrId = Guid.Parse("11111111-aaaa-aaaa-aaaa-111111111111");
+        var sizeAttrId = Guid.Parse("22222222-aaaa-aaaa-aaaa-222222222222");
+        var storageAttrId = Guid.Parse("33333333-aaaa-aaaa-aaaa-333333333333");
+
+        if (!await context.ProductAttributes.AnyAsync(a => a.Id == colorAttrId))
         {
-            new ProductAttributeValue
+            await context.ProductAttributes.AddAsync(new ProductAttribute
             {
-                Id = Guid.Parse("11111111-bbbb-bbbb-bbbb-111111111111"),
-                AttributeId = colorAttribute.Id,
-                Value = "Siyah",
-                ColorCode = "#000000",
+                Id = colorAttrId,
+                Name = "Renk",
+                Slug = "renk",
+                Description = "Ürün rengi",
                 DisplayOrder = 1,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
-            },
-            new ProductAttributeValue
-            {
-                Id = Guid.Parse("22222222-bbbb-bbbb-bbbb-222222222222"),
-                AttributeId = colorAttribute.Id,
-                Value = "Beyaz",
-                ColorCode = "#FFFFFF",
-                DisplayOrder = 2,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            },
-            new ProductAttributeValue
-            {
-                Id = Guid.Parse("33333333-bbbb-bbbb-bbbb-333333333333"),
-                AttributeId = colorAttribute.Id,
-                Value = "Mavi",
-                ColorCode = "#0000FF",
-                DisplayOrder = 3,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            }
-        };
+            });
+        }
 
-        var storageValues = new List<ProductAttributeValue>
+        if (!await context.ProductAttributes.AnyAsync(a => a.Id == sizeAttrId))
         {
-            new ProductAttributeValue
+            await context.ProductAttributes.AddAsync(new ProductAttribute
             {
-                Id = Guid.Parse("44444444-bbbb-bbbb-bbbb-444444444444"),
-                AttributeId = storageAttribute.Id,
-                Value = "128GB",
-                DisplayOrder = 1,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            },
-            new ProductAttributeValue
-            {
-                Id = Guid.Parse("55555555-bbbb-bbbb-bbbb-555555555555"),
-                AttributeId = storageAttribute.Id,
-                Value = "256GB",
+                Id = sizeAttrId,
+                Name = "Beden",
+                Slug = "beden",
+                Description = "Ürün bedeni",
                 DisplayOrder = 2,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
-            },
-            new ProductAttributeValue
+            });
+        }
+
+        if (!await context.ProductAttributes.AnyAsync(a => a.Id == storageAttrId))
+        {
+            await context.ProductAttributes.AddAsync(new ProductAttribute
             {
-                Id = Guid.Parse("66666666-bbbb-bbbb-bbbb-666666666666"),
-                AttributeId = storageAttribute.Id,
-                Value = "512GB",
+                Id = storageAttrId,
+                Name = "Hafıza",
+                Slug = "hafiza",
+                Description = "Cihaz hafızası",
                 DisplayOrder = 3,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
-            }
+            });
+        }
+
+        await context.SaveChangesAsync();
+
+        // Seed Attribute Values (only if not exist)
+        var colorValues = new[]
+        {
+            (Id: Guid.Parse("11111111-bbbb-bbbb-bbbb-111111111111"), Value: "Siyah", ColorCode: "#000000"),
+            (Id: Guid.Parse("22222222-bbbb-bbbb-bbbb-222222222222"), Value: "Beyaz", ColorCode: "#FFFFFF"),
+            (Id: Guid.Parse("33333333-bbbb-bbbb-bbbb-333333333333"), Value: "Mavi", ColorCode: "#0000FF")
         };
 
-        await context.ProductAttributeValues.AddRangeAsync(colorValues);
-        await context.ProductAttributeValues.AddRangeAsync(storageValues);
+        foreach (var (id, value, colorCode) in colorValues)
+        {
+            if (!await context.ProductAttributeValues.AnyAsync(v => v.Id == id))
+            {
+                await context.ProductAttributeValues.AddAsync(new ProductAttributeValue
+                {
+                    Id = id,
+                    AttributeId = colorAttrId,
+                    Value = value,
+                    ColorCode = colorCode,
+                    DisplayOrder = Array.IndexOf(colorValues, colorValues.First(x => x.Id == id)) + 1,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+        }
 
-        await context.Categories.AddRangeAsync(categories);
-        await context.Brands.AddRangeAsync(brands);
+        var storageValues = new[]
+        {
+            (Id: Guid.Parse("44444444-bbbb-bbbb-bbbb-444444444444"), Value: "128GB"),
+            (Id: Guid.Parse("55555555-bbbb-bbbb-bbbb-555555555555"), Value: "256GB"),
+            (Id: Guid.Parse("66666666-bbbb-bbbb-bbbb-666666666666"), Value: "512GB")
+        };
+
+        foreach (var (id, value) in storageValues)
+        {
+            if (!await context.ProductAttributeValues.AnyAsync(v => v.Id == id))
+            {
+                await context.ProductAttributeValues.AddAsync(new ProductAttributeValue
+                {
+                    Id = id,
+                    AttributeId = storageAttrId,
+                    Value = value,
+                    DisplayOrder = Array.IndexOf(storageValues, storageValues.First(x => x.Id == id)) + 1,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+        }
+
         await context.SaveChangesAsync();
 
         // Seed Sample Products
@@ -208,8 +228,8 @@ public static class DbSeeder
                 DiscountedPrice = 42999,
                 IsActive = true,
                 IsFeatured = true,
-                CategoryId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                BrandId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                CategoryId = elektronikId,
+                BrandId = samsungId,
                 CreatedAt = DateTime.UtcNow
             },
             new Product
@@ -224,8 +244,8 @@ public static class DbSeeder
                 DiscountedPrice = 4999,
                 IsActive = true,
                 IsFeatured = true,
-                CategoryId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                BrandId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                CategoryId = giyimId,
+                BrandId = nikeId,
                 CreatedAt = DateTime.UtcNow
             },
             new Product
@@ -240,8 +260,8 @@ public static class DbSeeder
                 DiscountedPrice = 13999,
                 IsActive = true,
                 IsFeatured = false,
-                CategoryId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-                BrandId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                CategoryId = mobilyaId,
+                BrandId = ikeaId,
                 CreatedAt = DateTime.UtcNow
             }
         };
