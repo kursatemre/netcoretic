@@ -12,7 +12,7 @@ namespace API.Controllers.Admin;
 
 [ApiController]
 [Route("api/admin/[controller]")]
-[Authorize(Roles = "Admin")]
+// [Authorize(Roles = "Admin")] // Temporarily disabled for development
 public class AdminDashboardController : ControllerBase
 {
     private readonly IMediator _mediator;
