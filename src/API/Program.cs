@@ -31,6 +31,9 @@ builder.Services.AddSwaggerGen(options =>
             Name = "E-Commerce Team"
         }
     });
+
+    // Ignore schema errors to prevent 500 errors
+    options.CustomSchemaIds(type => type.FullName);
 });
 
 // Database Configuration

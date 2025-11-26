@@ -11,7 +11,9 @@
       "Bash(git commit:*)",
       "Bash(git merge:*)",
       "Bash(git restore:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(dotnet run:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []
