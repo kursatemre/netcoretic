@@ -8,13 +8,11 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  AZURE_WEBAPP_NAME: ecommerce-api
-  AZURE_WEBAPP_PACKAGE_PATH: './publish'
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -30,68 +28,57 @@ jobs:
     - name: Build
       run: dotnet build ECommerce.sln --configuration Release --no-restore
 
-    - name: Run tests
-      run: dotnet test ECommerce.sln --no-restore --verbosity normal
+    # Tests disabled temporarily - no test projects yet
+    # - name: Run tests
+    #   run: dotnet test ECommerce.sln --no-restore --verbosity normal
 
-  build-docker:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:latest
-          ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:${{ github.sha }}
-        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ecommerce-api:buildcache
-        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ecommerce-api:buildcache,mode=max
-
-  deploy-to-azure:
-    runs-on: ubuntu-latest
-    needs: build-docker
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        images: ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:${{ github.sha }}
-
-    # Alternatif: Azure Container Instances
-    # - name: Deploy to Azure Container Instances
-    #   uses: azure/aci-deploy@v1
-    #   with:
-    #     resource-group: ecommerce-rg
-    #     dns-name-label: ecommerce-api
-    #     image: ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:${{ github.sha }}
-    #     registry-login-server: docker.io
-    #     registry-username: ${{ secrets.DOCKER_USERNAME }}
-    #     registry-password: ${{ secrets.DOCKER_PASSWORD }}
-    #     name: ecommerce-api
-    #     location: 'west europe'
+  # Docker and Azure deployment disabled - using Render.com instead
+  # build-docker:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-test
+  #   if: github.ref == 'refs/heads/main'
+  #
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #
+  #   - name: Set up Docker Buildx
+  #     uses: docker/setup-buildx-action@v3
+  #
+  #   - name: Login to Docker Hub
+  #     uses: docker/login-action@v3
+  #     with:
+  #       username: ${{ secrets.DOCKER_USERNAME }}
+  #       password: ${{ secrets.DOCKER_PASSWORD }}
+  #
+  #   - name: Build and push Docker image
+  #     uses: docker/build-push-action@v5
+  #     with:
+  #       context: .
+  #       file: ./Dockerfile
+  #       push: true
+  #       tags: |
+  #         ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:latest
+  #         ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:${{ github.sha }}
+  #       cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ecommerce-api:buildcache
+  #       cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/ecommerce-api:buildcache,mode=max
+  #
+  # deploy-to-azure:
+  #   runs-on: ubuntu-latest
+  #   needs: build-docker
+  #   if: github.ref == 'refs/heads/main'
+  #
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #
+  #   - name: Azure Login
+  #     uses: azure/login@v1
+  #     with:
+  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #
+  #   - name: Deploy to Azure Web App
+  #     uses: azure/webapps-deploy@v2
+  #     with:
+  #       app-name: ${{ env.AZURE_WEBAPP_NAME }}
+  #       images: ${{ secrets.DOCKER_USERNAME }}/ecommerce-api:${{ github.sha }}
