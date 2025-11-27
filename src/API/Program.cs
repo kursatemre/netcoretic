@@ -1,4 +1,5 @@
 using Application.Commands.Products;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
@@ -43,6 +44,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b.MigrationsAssembly("Infrastructure"));
 });
+
+// Register IApplicationDbContext
+builder.Services.AddScoped<IApplicationDbContext>(provider =>
+    provider.GetRequiredService<ApplicationDbContext>());
 
 // Redis Cache Configuration (Optional)
 var redisConnection = builder.Configuration.GetConnectionString("Redis");
