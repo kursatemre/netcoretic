@@ -106,3 +106,11 @@ export const adminDashboardApi = {
   getOverview: () => apiClient.get('/Dashboard/overview'),
   getRecentOrders: (limit: number = 5) => apiClient.get(`/Dashboard/recent-orders?limit=${limit}`),
 };
+
+export const storeSettingsApi = {
+  get: () => apiClient.get('/StoreSettings'),
+  update: (data: any) => apiClient.put('/StoreSettings', data),
+  updateGeneral: (data: any) => apiClient.put('/StoreSettings/general', data),
+  updateHeroSlides: (slides: any[]) => apiClient.put('/StoreSettings/hero-slides', slides),
+  updateSections: (sections: any[]) => apiClient.put('/StoreSettings/sections', sections),
+};

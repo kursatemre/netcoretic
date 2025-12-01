@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Settings, Image, Sliders, Layout, ChevronUp, ChevronDown, Plus, Trash2, Edit2, Eye, Save, X, Type, Palette } from 'lucide-react';
-import { Button, Card, Badge, ImageUpload } from '@/components/ui';
+import { Button, Card, Badge, ImageUpload, LoadingSpinner } from '@/components/ui';
+import { storeSettingsApi } from '@/lib/api';
 
 type SectionContent = {
   title?: string;
@@ -193,33 +194,71 @@ export default function StorePage() {
   const [showSlideModal, setShowSlideModal] = useState(false);
   const [showSectionModal, setShowSectionModal] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from API on mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('storeSettings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      setLogo(settings.logo || '');
-      setSiteName(settings.siteName || 'NetCoretic');
-      setThemeColor(settings.themeColor || '#F7A072');
-    }
+    const fetchSettings = async () => {
+      try {
+        const response = await storeSettingsApi.get();
+        if (response.data) {
+          setLogo(response.data.logo || '');
+          setSiteName(response.data.siteName || 'NetCoretic');
+          setThemeColor(response.data.themeColor || '#F7A072');
+          
+          if (response.data.heroSlides && response.data.heroSlides.length > 0) {
+            setHeroSlides(response.data.heroSlides);
+          }
+          
+          if (response.data.sections && response.data.sections.length > 0) {
+            setSections(response.data.sections);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching store settings:', error);
+        // Fallback to localStorage
+        const savedSettings = localStorage.getItem('storeSettings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          setLogo(settings.logo || '');
+          setSiteName(settings.siteName || 'NetCoretic');
+          setThemeColor(settings.themeColor || '#F7A072');
+        }
 
-    const savedSlides = localStorage.getItem('heroSlides');
-    if (savedSlides) {
-      setHeroSlides(JSON.parse(savedSlides));
-    }
+        const savedSlides = localStorage.getItem('heroSlides');
+        if (savedSlides) {
+          setHeroSlides(JSON.parse(savedSlides));
+        }
 
-    const savedSections = localStorage.getItem('storeSections');
-    if (savedSections) {
-      setSections(JSON.parse(savedSections));
-    }
+        const savedSections = localStorage.getItem('storeSections');
+        if (savedSections) {
+          setSections(JSON.parse(savedSections));
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
   }, []);
 
   // Save general settings
-  const saveGeneralSettings = () => {
-    const settings = { logo, siteName, themeColor };
-    localStorage.setItem('storeSettings', JSON.stringify(settings));
-    alert('Ayarlar başarıyla kaydedildi!');
+  const saveGeneralSettings = async () => {
+    setSaving(true);
+    try {
+      await storeSettingsApi.updateGeneral({ siteName, logo, themeColor });
+      // Also save to localStorage as backup
+      localStorage.setItem('storeSettings', JSON.stringify({ logo, siteName, themeColor }));
+      alert('Ayarlar başarıyla kaydedildi!');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      // Fallback to localStorage only
+      localStorage.setItem('storeSettings', JSON.stringify({ logo, siteName, themeColor }));
+      alert('Ayarlar yerel olarak kaydedildi (API erişilemedi)');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const moveSection = (id: string, direction: 'up' | 'down') => {
@@ -269,14 +308,28 @@ export default function StorePage() {
     setEditingSection(section);
   };
 
-  const saveSection = () => {
+  const saveSection = async () => {
     if (!editingSection) return;
-    const updatedSections = sections.map(s =>
-      s.id === editingSection.id ? editingSection : s
-    );
-    setSections(updatedSections);
-    localStorage.setItem('storeSections', JSON.stringify(updatedSections));
-    setEditingSection(null);
+    setSaving(true);
+    try {
+      const updatedSections = sections.map(s =>
+        s.id === editingSection.id ? editingSection : s
+      );
+      setSections(updatedSections);
+      await storeSettingsApi.updateSections(updatedSections);
+      localStorage.setItem('storeSections', JSON.stringify(updatedSections));
+      setEditingSection(null);
+    } catch (error) {
+      console.error('Error saving section:', error);
+      const updatedSections = sections.map(s =>
+        s.id === editingSection.id ? editingSection : s
+      );
+      setSections(updatedSections);
+      localStorage.setItem('storeSections', JSON.stringify(updatedSections));
+      setEditingSection(null);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addHeroSlide = () => {
@@ -293,24 +346,51 @@ export default function StorePage() {
     setShowSlideModal(true);
   };
 
-  const saveSlide = () => {
+  const saveSlide = async () => {
     if (!editingSlide) return;
+    setSaving(true);
 
-    const exists = heroSlides.find(s => s.id === editingSlide.id);
-    let updatedSlides;
-    if (exists) {
-      updatedSlides = heroSlides.map(s => s.id === editingSlide.id ? editingSlide : s);
-    } else {
-      updatedSlides = [...heroSlides, editingSlide];
+    try {
+      const exists = heroSlides.find(s => s.id === editingSlide.id);
+      let updatedSlides;
+      if (exists) {
+        updatedSlides = heroSlides.map(s => s.id === editingSlide.id ? editingSlide : s);
+      } else {
+        updatedSlides = [...heroSlides, editingSlide];
+      }
+      setHeroSlides(updatedSlides);
+      await storeSettingsApi.updateHeroSlides(updatedSlides);
+      localStorage.setItem('heroSlides', JSON.stringify(updatedSlides));
+      setShowSlideModal(false);
+      setEditingSlide(null);
+    } catch (error) {
+      console.error('Error saving slide:', error);
+      // Fallback to localStorage
+      const exists = heroSlides.find(s => s.id === editingSlide.id);
+      let updatedSlides;
+      if (exists) {
+        updatedSlides = heroSlides.map(s => s.id === editingSlide.id ? editingSlide : s);
+      } else {
+        updatedSlides = [...heroSlides, editingSlide];
+      }
+      setHeroSlides(updatedSlides);
+      localStorage.setItem('heroSlides', JSON.stringify(updatedSlides));
+      setShowSlideModal(false);
+      setEditingSlide(null);
+    } finally {
+      setSaving(false);
     }
-    setHeroSlides(updatedSlides);
-    localStorage.setItem('heroSlides', JSON.stringify(updatedSlides));
-    setShowSlideModal(false);
-    setEditingSlide(null);
   };
 
-  const deleteSlide = (id: string) => {
-    setHeroSlides(heroSlides.filter(s => s.id !== id));
+  const deleteSlide = async (id: string) => {
+    const updatedSlides = heroSlides.filter(s => s.id !== id);
+    setHeroSlides(updatedSlides);
+    try {
+      await storeSettingsApi.updateHeroSlides(updatedSlides);
+    } catch (error) {
+      console.error('Error deleting slide:', error);
+    }
+    localStorage.setItem('heroSlides', JSON.stringify(updatedSlides));
   };
 
   const renderSectionEditor = () => {
@@ -534,15 +614,23 @@ export default function StorePage() {
             >
               İptal
             </Button>
-            <Button onClick={saveSection}>
+            <Button onClick={saveSection} disabled={saving}>
               <Save size={18} className="mr-2" />
-              Kaydet
+              {saving ? 'Kaydediliyor...' : 'Kaydet'}
             </Button>
           </div>
         </div>
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -652,9 +740,9 @@ export default function StorePage() {
               </div>
 
               <div className="pt-4">
-                <Button onClick={saveGeneralSettings}>
+                <Button onClick={saveGeneralSettings} disabled={saving}>
                   <Save size={18} className="mr-2" />
-                  Ayarları Kaydet
+                  {saving ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
                 </Button>
               </div>
             </div>

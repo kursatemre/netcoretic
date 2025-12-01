@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { storeSettingsApi } from '@/lib/api';
 
 interface HeroSlide {
   id: string;
@@ -57,21 +58,37 @@ export default function HeroSection() {
   const [slides, setSlides] = useState<HeroSlide[]>(defaultSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // localStorage'dan slaytları yükle
+  // API'den slaytları yükle
   useEffect(() => {
-    const savedSlides = localStorage.getItem('heroSlides');
-    if (savedSlides) {
+    const fetchSlides = async () => {
       try {
-        const parsed = JSON.parse(savedSlides);
-        // Sadece aktif slaytları göster
-        const activeSlides = parsed.filter((s: HeroSlide) => s.enabled);
-        if (activeSlides.length > 0) {
-          setSlides(activeSlides);
+        const response = await storeSettingsApi.get();
+        if (response.data?.heroSlides && response.data.heroSlides.length > 0) {
+          // Sadece aktif slaytları göster
+          const activeSlides = response.data.heroSlides.filter((s: HeroSlide) => s.enabled);
+          if (activeSlides.length > 0) {
+            setSlides(activeSlides);
+          }
         }
-      } catch (e) {
-        console.error('Error parsing hero slides:', e);
+      } catch (error) {
+        console.error('Error fetching hero slides:', error);
+        // API başarısız olursa localStorage'dan dene
+        const savedSlides = localStorage.getItem('heroSlides');
+        if (savedSlides) {
+          try {
+            const parsed = JSON.parse(savedSlides);
+            const activeSlides = parsed.filter((s: HeroSlide) => s.enabled);
+            if (activeSlides.length > 0) {
+              setSlides(activeSlides);
+            }
+          } catch (e) {
+            console.error('Error parsing hero slides:', e);
+          }
+        }
       }
-    }
+    };
+
+    fetchSlides();
   }, []);
 
   const nextSlide = () => {
