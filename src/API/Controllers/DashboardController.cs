@@ -24,7 +24,7 @@ public class DashboardController : ControllerBase
         var totalOrders = await _context.Orders.CountAsync();
         var totalProducts = await _context.Products.CountAsync();
         var activeProducts = await _context.Products.CountAsync(p => p.IsActive);
-        var lowStockProducts = await _context.ProductVariants.CountAsync(v => v.StockQuantity < 10);
+        var lowStockProducts = await _context.ProductVariations.CountAsync(v => v.StockQuantity < 10);
         var totalUsers = await _context.Users.CountAsync();
 
         var todayOrders = await _context.Orders
