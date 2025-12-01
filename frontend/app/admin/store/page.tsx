@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Settings, Image, Sliders, Layout, ChevronUp, ChevronDown, Plus, Trash2, Edit2, Eye, Save, X, Type, Palette } from 'lucide-react';
-import { Button, Card, Badge } from '@/components/ui';
+import { Button, Card, Badge, ImageUpload } from '@/components/ui';
 
 type SectionContent = {
   title?: string;
@@ -473,27 +473,15 @@ export default function StorePage() {
 
             {/* Image for Promo Banner */}
             {type === 'promo-banner' && (
-              <div>
-                <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
-                  <Image size={16} />
-                  Banner Görseli
-                </label>
-                <input
-                  type="text"
-                  value={content.image || ''}
-                  onChange={(e) => setEditingSection({
-                    ...editingSection,
-                    content: { ...content, image: e.target.value }
-                  })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F7A072] focus:border-transparent"
-                  placeholder="https://example.com/image.jpg"
-                />
-                {content.image && (
-                  <div className="mt-3 rounded-lg overflow-hidden border">
-                    <img src={content.image} alt="Preview" className="w-full h-48 object-cover" />
-                  </div>
-                )}
-              </div>
+              <ImageUpload
+                label="Banner Görseli"
+                value={content.image || ''}
+                onChange={(image) => setEditingSection({
+                  ...editingSection,
+                  content: { ...content, image: image as string }
+                })}
+                multiple={false}
+              />
             )}
 
             {/* Description for Promo Banner */}
@@ -636,6 +624,13 @@ export default function StorePage() {
                 />
                 <p className="text-sm text-gray-500 mt-1">Boş bırakırsanız site adı gösterilir</p>
               </div>
+
+              <ImageUpload
+                label="Logo Görseli"
+                value={logo}
+                onChange={(image) => setLogo(image as string)}
+                multiple={false}
+              />
 
               <div>
                 <label className="block text-sm font-semibold mb-2">Tema Rengi</label>
@@ -856,6 +851,13 @@ export default function StorePage() {
                   placeholder="https://example.com/image.jpg"
                 />
               </div>
+
+              <ImageUpload
+                label="Slayt Görseli"
+                value={editingSlide.image}
+                onChange={(image) => setEditingSlide({ ...editingSlide, image: image as string })}
+                multiple={false}
+              />
 
               <div>
                 <label className="block text-sm font-semibold mb-2">Buton Metni</label>

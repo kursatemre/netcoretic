@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save } from 'lucide-react';
-import { Button, Input, Card } from '@/components/ui';
+import { Button, Input, Card, ImageUpload } from '@/components/ui';
 import { adminProductApi, adminCategoryApi, adminBrandApi } from '@/lib/api';
 
 export default function NewProductPage() {
@@ -24,6 +24,7 @@ export default function NewProductPage() {
     brandId: '',
     isActive: true,
     isFeatured: false,
+    images: [] as string[],
   });
 
   useEffect(() => {
@@ -199,6 +200,15 @@ export default function NewProductPage() {
               placeholder="Detaylı ürün açıklaması"
             />
           </div>
+
+          {/* Ürün Görselleri */}
+          <ImageUpload
+            label="Ürün Görselleri"
+            value={formData.images}
+            onChange={(images) => setFormData(prev => ({ ...prev, images: images as string[] }))}
+            multiple={true}
+            maxFiles={10}
+          />
 
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2">

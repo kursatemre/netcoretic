@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { Button, Input, TextArea, Modal, LoadingSpinner } from '@/components/ui';
+import { Button, Input, TextArea, Modal, LoadingSpinner, ImageUpload } from '@/components/ui';
 import { adminCategoryApi } from '@/lib/api';
 
 interface Category {
   id: string;
   name: string;
   description: string;
+  image?: string;
   productCount: number;
   createdAt: string;
 }
@@ -18,7 +19,7 @@ export default function AdminCategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [formData, setFormData] = useState({ name: '', description: '', image: '' });
 
   useEffect(() => {
     fetchCategories();
@@ -44,7 +45,7 @@ export default function AdminCategoriesPage() {
         await adminCategoryApi.create(formData);
       }
       setShowModal(false);
-      setFormData({ name: '', description: '' });
+      setFormData({ name: '', description: '', image: '' });
       setEditingCategory(null);
       fetchCategories();
     } catch (error) {
@@ -71,7 +72,7 @@ export default function AdminCategoriesPage() {
           <h1 className="text-3xl font-bold text-gray-900">Kategoriler</h1>
           <p className="mt-2 text-sm text-gray-700">Ürün kategorilerini yönetin</p>
         </div>
-        <Button onClick={() => { setEditingCategory(null); setFormData({ name: '', description: '' }); setShowModal(true); }}>
+        <Button onClick={() => { setEditingCategory(null); setFormData({ name: '', description: '', image: '' }); setShowModal(true); }}>
           <Plus className="h-5 w-5 mr-2" />
           Yeni Kategori
         </Button>
@@ -81,6 +82,7 @@ export default function AdminCategoriesPage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Görsel</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori Adı</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Açıklama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Sayısı</th>
@@ -90,11 +92,20 @@ export default function AdminCategoriesPage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {categories.map((category) => (
               <tr key={category.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4">
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden">
+                    {category.image ? (
+                      <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Yok</div>
+                    )}
+                  </div>
+                </td>
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{category.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-500">{category.description}</td>
                 <td className="px-6 py-4 text-sm text-gray-900">{category.productCount}</td>
                 <td className="px-6 py-4 text-right text-sm font-medium">
-                  <button onClick={() => { setEditingCategory(category); setFormData({ name: category.name, description: category.description || '' }); setShowModal(true); }} className="text-indigo-600 hover:text-indigo-900 mr-4">
+                  <button onClick={() => { setEditingCategory(category); setFormData({ name: category.name, description: category.description || '', image: category.image || '' }); setShowModal(true); }} className="text-indigo-600 hover:text-indigo-900 mr-4">
                     <Edit className="h-5 w-5 inline" />
                   </button>
                   <button onClick={() => handleDelete(category.id)} className="text-red-600 hover:text-red-900">
@@ -111,6 +122,12 @@ export default function AdminCategoriesPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Kategori Adı" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
           <TextArea label="Açıklama" rows={3} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+          <ImageUpload
+            label="Kategori Görseli"
+            value={formData.image}
+            onChange={(image) => setFormData({ ...formData, image: image as string })}
+            multiple={false}
+          />
           <div className="flex gap-3 pt-4">
             <Button type="submit">Kaydet</Button>
             <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>İptal</Button>
