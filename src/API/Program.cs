@@ -189,4 +189,17 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Root endpoint - API health check
+app.MapGet("/", () => Results.Ok(new
+{
+    status = "OK",
+    name = "Netcoretic E-Commerce API",
+    version = "v1",
+    swagger = "/swagger",
+    timestamp = DateTime.UtcNow
+}));
+
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow }));
+
 app.Run();
