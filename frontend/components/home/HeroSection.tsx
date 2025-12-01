@@ -4,43 +4,75 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const slides = [
+interface HeroSlide {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  cta: string;
+  link: string;
+  enabled: boolean;
+}
+
+const defaultSlides: HeroSlide[] = [
   {
-    id: 1,
+    id: '1',
     title: 'Yeni Sezon Koleksiyonu',
     subtitle: 'Trend parçalarla stilinizi tamamlayın. Premium kalite, uygun fiyat.',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&h=1080&fit=crop&q=80',
     cta: 'Ürünleri Keşfet',
-    link: '/products'
+    link: '/products',
+    enabled: true
   },
   {
-    id: 2,
+    id: '2',
     title: 'Kadın Giyim Koleksiyonu',
     subtitle: 'Şık ve modern parçalarla gardırobunuzu yenileyin. İndirimli fiyatlarla.',
     image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&h=1080&fit=crop&q=80',
     cta: 'Kadın Ürünleri',
-    link: '/products?category=kadin'
+    link: '/products?category=kadin',
+    enabled: true
   },
   {
-    id: 3,
+    id: '3',
     title: 'Erkek Giyim Tarzı',
     subtitle: 'Klasik ve rahat kombinler. Her tarza uygun ürünler sizleri bekliyor.',
     image: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1920&h=1080&fit=crop&q=80',
     cta: 'Erkek Ürünleri',
-    link: '/products?category=erkek'
+    link: '/products?category=erkek',
+    enabled: true
   },
   {
-    id: 4,
+    id: '4',
     title: 'Özel İndirim Fırsatları',
     subtitle: '%50\'ye varan indirimler. Kaçırılmayacak fiyatlar ve kaliteli ürünler.',
     image: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=1920&h=1080&fit=crop&q=80',
     cta: 'İndirimleri Gör',
-    link: '/products?sale=true'
+    link: '/products?sale=true',
+    enabled: true
   }
 ];
 
 export default function HeroSection() {
+  const [slides, setSlides] = useState<HeroSlide[]>(defaultSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // localStorage'dan slaytları yükle
+  useEffect(() => {
+    const savedSlides = localStorage.getItem('heroSlides');
+    if (savedSlides) {
+      try {
+        const parsed = JSON.parse(savedSlides);
+        // Sadece aktif slaytları göster
+        const activeSlides = parsed.filter((s: HeroSlide) => s.enabled);
+        if (activeSlides.length > 0) {
+          setSlides(activeSlides);
+        }
+      } catch (e) {
+        console.error('Error parsing hero slides:', e);
+      }
+    }
+  }, []);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);

@@ -1,14 +1,16 @@
 /**
  * Format a number as Turkish Lira currency
  */
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number | null | undefined): string {
+  if (amount === null || amount === undefined) return '₺0,00';
   return `₺${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 /**
  * Format a date to Turkish locale
  */
-export function formatDate(date: string | Date): string {
+export function formatDate(date: string | Date | null | undefined): string {
+  if (!date) return '-';
   const d = typeof date === 'string' ? new Date(date) : date;
   return d.toLocaleDateString('tr-TR');
 }
@@ -16,7 +18,8 @@ export function formatDate(date: string | Date): string {
 /**
  * Format a date with time to Turkish locale
  */
-export function formatDateTime(date: string | Date): string {
+export function formatDateTime(date: string | Date | null | undefined): string {
+  if (!date) return '-';
   const d = typeof date === 'string' ? new Date(date) : date;
   return d.toLocaleString('tr-TR');
 }
